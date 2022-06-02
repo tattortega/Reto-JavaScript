@@ -69,3 +69,57 @@ body {
     height: 3rem;
     cursor: pointer;
   }
+
+  #section-game {
+    padding-block-start: 2rem;
+    padding-block-end: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  #section-game p {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+  }
+  
+  
+  #section-game #answer {
+    font-size: 2rem;
+    margin-block-start: 2rem;
+    width: 100%;
+    height: 3rem;
+    cursor: pointer;
+  }
+  
+  #answer:hover {
+    background: blue;
+  }
+  
+  #section-game #surrender {
+    margin-top: 1rem;
+    font-size: 2rem;
+    margin-block-start: 2rem;
+    width: 10rem;
+    height: 3rem;
+    cursor: pointer;
+  }
+  
+  #surrender:hover {
+    background: red;
+  }
+  
+  #backHome {
+    margin-top: 1rem;
+    font-size: 2rem;
+    margin-block-start: 2rem;
+    height: 3rem;
+    cursor: pointer;
+  }
