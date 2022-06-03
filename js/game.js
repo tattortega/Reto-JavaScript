@@ -1,19 +1,25 @@
 import { gameView } from './view.game.js';
 import { math, spanish, culture, biology, tech } from './question.js';
 
-gameView();
+/**
+ * @author Ricardo Ortega <tattortega.28@gmail.com>
+ * @version 1.0.0 2022/06/02
+ * @since 1.0.0
+ */
 
+gameView();
 
 const mainGame = document.querySelector('#section-game');
 const showHistory = document.querySelector('#gameHistory');
 let buttonAnswer = '';
 let level = 0;
-let idPlayer = 0;
 let points = 0;
 let history = [];
 let namePlayer = '';
-let gameActive = false;
 
+/**
+ * Inicia el juego
+ */
 const startGame = () => {
     const playerName = document.querySelector('#playerName').value;
     if (playerName == "") {
@@ -32,9 +38,15 @@ const startGame = () => {
     }
 };
 
+/**
+ * Escucha el evento startGame
+ */
 const buttonStart = document.querySelector('#buttonStart');
 buttonStart.addEventListener('click', startGame);
 
+/**
+ * Elige la categoria y pregunta aleatoriamente  
+ */
 const loopQuestions = () => {
     if (level < 5) {
         const categories = [math, biology, spanish, tech, culture];
@@ -47,11 +59,15 @@ const loopQuestions = () => {
         gameWinner.innerHTML = 'Ganaste el juego';
         mainGame.appendChild(gameWinner);
         endGame();
-        idPlayer++;
         addPlayers();
     }
 };
 
+/**
+ * Muestra la pregunta elegida con sus opciones de respuesta
+ * @param {*} category 
+ * @param {*} randomQuestion 
+ */
 const showQuestion = (category, randomQuestion) => {
     const message = document.createElement('p');
     message.id = 'message';
@@ -88,6 +104,9 @@ const showQuestion = (category, randomQuestion) => {
     mainGame.appendChild(surrrender);
 };
 
+/**
+ * Remueve todos los hijos del section-game
+ */
 const removeChildren = () => {
     const children = document.querySelectorAll('#section-game > *');
     for (let c of children) {
@@ -95,6 +114,9 @@ const removeChildren = () => {
     }
 };
 
+/**
+ * Función para agregar jugadores en el localStorage
+ */
 function addPlayers() {
     let recoveredData = localStorage.getItem('storage');
     let data = JSON.parse(recoveredData);
@@ -108,19 +130,23 @@ function addPlayers() {
     }
 }
 
+/**
+ * Función que comprueba la opcion elegida por el jugador y la respuesta correcta
+ * @param {*} category 
+ * @param {*} randomQuestion 
+ * @param {*} answerPlayer 
+ */
 function checkUserAnswer(category, randomQuestion, answerPlayer) {
     const answerCorrect = category[randomQuestion].correct;
     if (answerPlayer == answerCorrect) {
         points += 10;
         level++;
-        gameActive = true;
         removeChildren();
         showPoints();
         loopQuestions();
     } else {
         alert('Respuesta incorrecta');
         removeChildren();
-        gameActive = false;
         const end_game = document.createElement('p');
         end_game.id = 'endGame';
         end_game.innerHTML = 'Fin del juego';
@@ -128,11 +154,13 @@ function checkUserAnswer(category, randomQuestion, answerPlayer) {
         addPlayers();
         showPoints();
         endGame();
-        idPlayer++;
         level = 0;
     }
 }
 
+/**
+ * Función que muestra los puntos que lleva el jugador
+ */
 function showPoints() {
     const pointsPlayer = document.createElement('p');
     pointsPlayer.id = 'points';
@@ -140,6 +168,9 @@ function showPoints() {
     mainGame.appendChild(pointsPlayer);
 }
 
+/**
+ * Función cuando el juego termina
+ */
 function endGame() {
     const backHome = document.createElement('button');
     backHome.id = 'backHome';
@@ -151,6 +182,9 @@ function endGame() {
     mainGame.appendChild(backHome);
 }
 
+/**
+ * Muestra el historial del juego
+ */
 showHistory.addEventListener('click', () => {
     const children = document.querySelectorAll('#container > *');
     for (let c of children) {
