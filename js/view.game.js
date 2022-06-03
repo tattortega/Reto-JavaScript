@@ -1,3 +1,10 @@
+/**
+ * Vista principal del juego
+ * @author Ricardo Ortega <tattortega.28@gmail.com>
+ * @version 1.0.0 2022/06/02
+ * @since 1.0.0
+ */
+
 export const gameView = () => {
 
     const container = document.querySelector("#container");
