@@ -1,8 +1,8 @@
 import { gameView } from './view.game.js';
 import { math, spanish, culture, biology, tech } from './question.js';
 
-
 gameView();
+
 
 const mainGame = document.querySelector('#section-game');
 const showHistory = document.querySelector('#gameHistory');
@@ -11,6 +11,7 @@ let level = 0;
 let idPlayer = 0;
 let points = 0;
 let history = [];
+let namePlayer = '';
 let gameActive = false;
 
 const startGame = () => {
@@ -18,24 +19,21 @@ const startGame = () => {
     if (playerName == "") {
         alert("El nombre es requerido");
     } else {
-        setPlayer(playerName);
+        namePlayer = playerName;
+        history.push({namePlayer: namePlayer, points: points});
         const children = document.querySelectorAll('#container > *');
         for (let c of children) {
             c.remove();
         }
+        const p = document.createElement('p');
+        p.innerHTML = `Bienvenido ${namePlayer}`;
+        mainGame.appendChild(p);
         loopQuestions();
     }
 };
 
 const buttonStart = document.querySelector('#buttonStart');
 buttonStart.addEventListener('click', startGame);
-
-const setPlayer = (playerName) => {
-    history.push({ player: playerName, points: points });
-    const p = document.createElement('p');
-    p.innerHTML = `Bienvenido ${history[idPlayer].player}`;
-    mainGame.appendChild(p);
-};
 
 const loopQuestions = () => {
     if (level < 5) {
@@ -48,8 +46,9 @@ const loopQuestions = () => {
         gameWinner.id = 'gameWinner';
         gameWinner.innerHTML = 'Ganaste el juego';
         mainGame.appendChild(gameWinner);
-        surrender();
+        endGame();
         idPlayer++;
+        addPlayers();
     }
 };
 
@@ -68,13 +67,13 @@ const showQuestion = (category, randomQuestion) => {
     for (let a of answers) {
         const option = document.createElement('button');
         option.id = 'answer';
+        i++;
         option.onclick = () => {
             buttonAnswer = a;
             checkUserAnswer(category, randomQuestion, buttonAnswer);
         };
         option.innerHTML = a;
         mainGame.appendChild(option);
-        i++;
     }
 
     const surrrender = document.createElement('button');
@@ -83,9 +82,10 @@ const showQuestion = (category, randomQuestion) => {
     surrrender.onclick = () => {
         removeChildren();
         showPoints();
+        addPlayers();
+        endGame();
     }
     mainGame.appendChild(surrrender);
-
 };
 
 const removeChildren = () => {
@@ -95,14 +95,23 @@ const removeChildren = () => {
     }
 };
 
-function checkUserAnswer(category, randomQuestion, buttonAnswer) {
-    const answerCorrect = category[randomQuestion].correct;
+function addPlayers() {
+    let recoveredData = localStorage.getItem('storage');
+    let data = JSON.parse(recoveredData);
+    let newPlayers = history;
+    if (recoveredData == null) {
+        localStorage.setItem('storage', JSON.stringify(newPlayers));
+    } else {
+        let newPlayer = { namePlayer: namePlayer, points: points };
+        data.push(newPlayer);
+        localStorage.setItem('storage', JSON.stringify(data));
+    }
+}
 
-    if (buttonAnswer == answerCorrect) {
-        history[idPlayer].points++;
-        const historyLocalStorage = new Array(history);
-        const historLocalStorage = localStorage.setItem("history", new Array(JSON.stringify(historyLocalStorage)));
-        console.log(historyLocalStorage)
+function checkUserAnswer(category, randomQuestion, answerPlayer) {
+    const answerCorrect = category[randomQuestion].correct;
+    if (answerPlayer == answerCorrect) {
+        points += 10;
         level++;
         gameActive = true;
         removeChildren();
@@ -112,11 +121,13 @@ function checkUserAnswer(category, randomQuestion, buttonAnswer) {
         alert('Respuesta incorrecta');
         removeChildren();
         gameActive = false;
-        const endGame = document.createElement('p');
-        endGame.id = 'endGame';
-        endGame.innerHTML = 'Fin del juego';
-        mainGame.appendChild(endGame);
+        const end_game = document.createElement('p');
+        end_game.id = 'endGame';
+        end_game.innerHTML = 'Fin del juego';
+        mainGame.appendChild(end_game);
+        addPlayers();
         showPoints();
+        endGame();
         idPlayer++;
         level = 0;
     }
@@ -125,15 +136,11 @@ function checkUserAnswer(category, randomQuestion, buttonAnswer) {
 function showPoints() {
     const pointsPlayer = document.createElement('p');
     pointsPlayer.id = 'points';
-    pointsPlayer.innerHTML = 'Puntos: ' + history[idPlayer].points;
+    pointsPlayer.innerHTML = 'Puntos: ' + points;
     mainGame.appendChild(pointsPlayer);
-    if (gameActive) {
-        surrender();
-    }
-
 }
 
-function surrender() {
+function endGame() {
     const backHome = document.createElement('button');
     backHome.id = 'backHome';
     backHome.innerHTML = "Regresar al inicio";
@@ -144,7 +151,6 @@ function surrender() {
     mainGame.appendChild(backHome);
 }
 
-
 showHistory.addEventListener('click', () => {
     const children = document.querySelectorAll('#container > *');
     for (let c of children) {
@@ -153,12 +159,17 @@ showHistory.addEventListener('click', () => {
     const historyPlayers = document.createElement('p');
     historyPlayers.innerHTML = 'Historial de jugadores';
     mainGame.appendChild(historyPlayers);
-    let orderPoints = history.sort((a, b) => {
-        return b.points - a.points;
-    });
-    for (let h of orderPoints) {
-        const orderedPoints = document.createElement('p');
-        orderedPoints.innerHTML = `${h.player} - ${h.orderedPoints}`;
-        mainGame.appendChild(p);
+    let listPlayerStorage = JSON.parse(localStorage.getItem('storage'));
+    if (listPlayerStorage == null) {
+        endGame();
+    } else {
+        listPlayerStorage.forEach(player => {
+            const listPoints = document.createElement('p');
+            listPoints.id = 'listPoints';
+            listPoints.innerHTML = `${player.namePlayer} - ${player.points} puntos`;
+            mainGame.append(listPoints);
+        });
+        endGame();
     }
 });
+
