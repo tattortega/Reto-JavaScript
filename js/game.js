@@ -124,7 +124,7 @@ function addPlayers() {
     if (recoveredData == null) {
         localStorage.setItem('storage', JSON.stringify(newPlayers));
     } else {
-        let newPlayer = { namePlayer: namePlayer, points: points };
+        let newPlayer = { namePlayer: namePlayer, points: history[0].points };
         data.push(newPlayer);
         localStorage.setItem('storage', JSON.stringify(data));
     }
@@ -139,7 +139,7 @@ function addPlayers() {
 function checkUserAnswer(category, randomQuestion, answerPlayer) {
     const answerCorrect = category[randomQuestion].correct;
     if (answerPlayer == answerCorrect) {
-        points += 10;
+        history[0].points += 10;
         level++;
         removeChildren();
         showPoints();
@@ -164,7 +164,7 @@ function checkUserAnswer(category, randomQuestion, answerPlayer) {
 function showPoints() {
     const pointsPlayer = document.createElement('p');
     pointsPlayer.id = 'points';
-    pointsPlayer.innerHTML = 'Puntos: ' + points;
+    pointsPlayer.innerHTML = 'Puntos: ' + history[0].points;
     mainGame.appendChild(pointsPlayer);
 }
 
